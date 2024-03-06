@@ -31,7 +31,7 @@ build_broker:
 	@echo Done!
 build_auth:
 	@echo Building auth binary...
-	chdir ..\authe-service && set GOOS=linux&& set GOARCH=amd64&& set CGO_ENABLED=0 && go build -o ${AUTH_BINARY} ./cmd/api
+	chdir ..\authentication-service && set GOOS=linux&& set GOARCH=amd64&& set CGO_ENABLED=0 && go build -o ${AUTH_BINARY} ./cmd/api
 	@echo Done!
 
 ## build_front: builds the frone end binary

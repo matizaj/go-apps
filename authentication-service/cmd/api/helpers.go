@@ -10,7 +10,7 @@ import (
 type jsonResponse struct {
 	Error   bool   `json:"error"`
 	Message string `json:"message"`
-	Data    any    `json:"data,ommitempty"`
+	Data    any    `json:"data,omitempty"`
 }
 
 func (app *Config) readJson(w http.ResponseWriter, r *http.Request, data any) error {

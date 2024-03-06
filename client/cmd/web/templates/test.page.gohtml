@@ -7,6 +7,7 @@
                 <h1 class="mt-5">Test microservices</h1>
                 <hr>
                 <a id="brokerBtn" class="btn btn-outline-secondary" href="javascript:void(0);">Test Broker</a>
+                <a id="authBtn" class="btn btn-outline-secondary" href="javascript:void(0);">Test Auth</a>
                 <div id="output" class="mt-5" style="outline: 1px solid silver; padding: 2em;">
                     <span class="text-muted">Output shows here...</span>
                 </div>
@@ -32,6 +33,7 @@
 {{define "js"}}
     <script>
         const brokerBtn = document.getElementById("brokerBtn")
+        const authBtn = document.getElementById("authBtn")
         const output = document.getElementById("output")
         const send = document.getElementById("payload")
         const received = document.getElementById("received")
@@ -49,6 +51,40 @@
                         console.log(data.message)
                     }else {
                         output.innerHTML += `<br><strong>Response from Broker Service </strong>: ${data.message}`
+                    }
+                })
+                .catch(err => {
+                    output.innerHTML += `<br><strong>Error: </strong>: ${err}`
+                })
+        })
+
+        authBtn.addEventListener("click", ()=>{
+            const payload = {
+                action: "auth",
+                auth: {
+                    email: "admin@example.com",
+                    password: "verysecret",
+                }
+            }
+            const headers = new Headers();
+            headers.append("Content-Type", "application/json")
+
+            const body = {
+                method: "POST",
+                body: JSON.stringify(payload),
+                headers
+            }
+
+            fetch("http:\/\/localhost:8081/handle", body)
+                .then(resp => resp.json())
+                .then(data => {
+                    send.innerHTML= JSON.stringify(payload, undefined, 4)
+                    received.innerHTML = JSON.stringify(data, undefined, 4)
+                    if (data.error) {
+                        console.log(data.message)
+                        output.innerHTML += `<br><strong>Error </strong>: ${data.message}`
+                    }else {
+                        output.innerHTML += `<br><strong>Response from Auth Service </strong>: ${data.message}`
                     }
                 })
                 .catch(err => {

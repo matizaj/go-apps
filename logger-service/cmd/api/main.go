@@ -45,11 +45,19 @@ func main() {
 		Models: data.New(client),
 	}
 
+	app.serve()
+
 }
 
 func (app *Config) serve() {
+	log.Println("Starting logging service on port ", webPort)
 	srv := &http.Server{
-		Addr: fmt.Sprintf(":%s", webPort),
+		Addr:    fmt.Sprintf(":%s", webPort),
+		Handler: app.routes(),
+	}
+	err := srv.ListenAndServe()
+	if err != nil {
+		log.Panic("logger service cant run")
 	}
 }
 

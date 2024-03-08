@@ -15,6 +15,18 @@ services:
       - ./db-data/postgres/:/var/lib/postgresql/data/
       - ./db-data/scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
 
+  mongo:
+    image: 'mongo:4.2.16-bionic'
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INIT_DB: logs
+      MONGO_INIT_ROOT_USERNAME: admin
+      MONGO_INIT_ROOT_PASSWORD: password
+    volumes:
+      - ./db-data/mongo/:/data/db
+
+
   authentication-service:
     build:
       context: ../authentication-service

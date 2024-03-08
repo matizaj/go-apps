@@ -12,6 +12,7 @@
 *.rej
 *.exe
 */db-data/postgres/*
+*/db-data/mongo/*
 .*.swp
 core
 *.cgo*.go

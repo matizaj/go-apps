@@ -31,7 +31,9 @@ func New(mongo *mongo.Client) Models {
 }
 
 func (l *LogEntry) Insert(entry LogEntry) error {
-	collection := client.Database("logs_db").Collection("logs")
+	log.Println("inside insert method")
+	collection := client.Database("logs").Collection("logs")
+	log.Println("collection: ", collection)
 	_, err := collection.InsertOne(context.TODO(), LogEntry{
 		Name:      entry.Name,
 		Data:      entry.Data,

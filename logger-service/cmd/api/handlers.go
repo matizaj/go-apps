@@ -14,6 +14,7 @@ type JsonPayload struct {
 func (app *Config) WriteLog(w http.ResponseWriter, r *http.Request) {
 	// TODO
 	// handle insert log to db
+	log.Println("into logger service")
 	var reqPayload JsonPayload
 	err := app.readJson(w, r, &reqPayload)
 	if err != nil {
@@ -35,6 +36,7 @@ func (app *Config) WriteLog(w http.ResponseWriter, r *http.Request) {
 		Data:    event,
 		Message: "logged",
 	}
+	log.Println("response: ", resp)
 
 	app.writeJson(w, http.StatusOK, resp)
 }

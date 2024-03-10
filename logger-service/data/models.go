@@ -25,26 +25,27 @@ type LogEntry struct {
 }
 
 func New(mongo *mongo.Client) Models {
+	client = mongo
 	return Models{
 		LogEntry: LogEntry{},
 	}
 }
 
 func (l *LogEntry) Insert(entry LogEntry) error {
-	log.Println("inside insert method")
+	log.Println("inside insert method", entry)
 	collection := client.Database("logs").Collection("logs")
-	log.Println("collection: ", collection)
+
 	_, err := collection.InsertOne(context.TODO(), LogEntry{
 		Name:      entry.Name,
 		Data:      entry.Data,
-		CreatedAt: entry.CreatedAt,
-		UpdatedAt: entry.UpdatedAt,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	})
-
 	if err != nil {
-		log.Println("error inserting into logs failed: ", err)
+		log.Println("Error inserting into logs:", err)
 		return err
 	}
+
 	return nil
 }
 
@@ -52,11 +53,11 @@ func (l *LogEntry) All() ([]*LogEntry, error) {
 	ctx, cancel := context.WithTimeout(context.TODO(), 15*time.Second)
 	defer cancel()
 
-	collection := client.Database("logs_db").Collection("logs")
+	collection := client.Database("logs").Collection("logs")
 	opts := options.Find()
 	opts.SetSort(bson.D{{"created_at", -1}})
 
-	cursor, err := collection.Find(context.TODO(), bson.D{}, opts)
+	cursor, err := collection.Find(context.Background(), bson.D{}, opts)
 	if err != nil {
 		log.Println("Finding all docs err: ", err)
 		return nil, err
@@ -78,10 +79,10 @@ func (l *LogEntry) All() ([]*LogEntry, error) {
 }
 
 func (l *LogEntry) GetById(id string) (*LogEntry, error) {
-	ctx, cancel := context.WithTimeout(context.TODO(), 15*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
-	collection := client.Database("logs_db").Collection("logs")
+	collection := client.Database("logs").Collection("logs")
 	docId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err
@@ -96,10 +97,10 @@ func (l *LogEntry) GetById(id string) (*LogEntry, error) {
 }
 
 func (l *LogEntry) DropCollection() error {
-	ctx, cancel := context.WithTimeout(context.TODO(), 15*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
-	collection := client.Database("logs_db").Collection("logs")
+	collection := client.Database("logs").Collection("logs")
 	if err := collection.Drop(ctx); err != nil {
 		return err
 	}
@@ -108,10 +109,10 @@ func (l *LogEntry) DropCollection() error {
 }
 
 func (l *LogEntry) Update() (*mongo.UpdateResult, error) {
-	ctx, cancel := context.WithTimeout(context.TODO(), 15*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
-	collection := client.Database("logs_db").Collection("logs")
+	collection := client.Database("logs").Collection("logs")
 	docId, err := primitive.ObjectIDFromHex(l.ID)
 	if err != nil {
 		return nil, err

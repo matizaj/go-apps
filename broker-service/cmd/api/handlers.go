@@ -54,7 +54,7 @@ func (app *Config) logItem(w http.ResponseWriter, entry LogPayload) {
 		return
 	}
 	logServiceUrl := "http://logger-service/log"
-	req, err := http.NewRequest("/log", logServiceUrl, bytes.NewBuffer(jsonData))
+	req, err := http.NewRequest("POST", logServiceUrl, bytes.NewBuffer(jsonData))
 	if err != nil {
 		app.errorJson(w, err)
 		return

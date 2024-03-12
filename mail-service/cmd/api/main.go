@@ -10,7 +10,6 @@ type hotdog int
 
 func (m hotdog) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	err := req.ParseForm()
-	body := req.Body
 	if err != nil {
 		log.Fatalln(err)
 	}

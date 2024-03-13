@@ -35,10 +35,18 @@ func Contact(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Fprintf(w, "contact-page")
 }
+
+func middleware(next http.Handler) http.Handler {
+	fmt.Println("hit middleware 1")
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("hit middleware 2")
+		next.ServeHTTP(w, r)
+	})
+}
 func main() {
 
 	fmt.Println("...main...")
-
+	http.Handle("/", middleware)
 	http.HandleFunc("/about", About)
 	http.HandleFunc("/contact/{id}", Contact)
 	http.HandleFunc("/contact/", Contact)

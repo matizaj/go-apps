@@ -7,28 +7,34 @@ import (
 	"net/http"
 )
 
-type server struct {
-}
-type Req struct {
-	Type string `json:"type"`
+type RequestBody struct {
+	Id        string `json:"id"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Age       int    `json:"age"`
 }
 
-func (s server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	var req Req
-	err := json.NewDecoder(r.Body).Decode(&req)
+func About(w http.ResponseWriter, r *http.Request) {
+	var requestBody RequestBody
+
+	err := json.NewDecoder(r.Body).Decode(&requestBody)
 	if err != nil {
-		fmt.Println("some shit ", err)
-		return
+		log.Println("cant parse request payload")
 	}
-	fmt.Println("type: ", req.Type, r.Method, r.ContentLength)
-	w.Header().Set("mateusz", "gomasster")
-	w.WriteHeader(203)
-	w.Write([]byte("hello"))
+	data, err := json.Marshal(requestBody)
+	fmt.Println("body: ", requestBody)
+	w.Header().Set("my-custom-header", "matesz-zajac")
+	w.Write(data)
 }
 func main() {
-	var s server
-	err := http.ListenAndServe(":4040", s)
+
+	fmt.Println("...main...")
+
+	http.HandleFunc("/about", About)
+	err := http.ListenAndServe(":4041", nil)
+	fmt.Println("Server is listening on port :4040")
 	if err != nil {
-		log.Panicln("server failed to start")
+		log.Panic("server cant start")
 	}
+
 }

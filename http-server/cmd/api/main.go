@@ -26,11 +26,22 @@ func About(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("my-custom-header", "matesz-zajac")
 	w.Write(data)
 }
+func Contact(w http.ResponseWriter, r *http.Request) {
+	reqId := r.PathValue("id")
+
+	fmt.Println("req id: ", reqId)
+	if reqId != "" {
+		fmt.Println("req id: ", reqId)
+	}
+	fmt.Fprintf(w, "contact-page")
+}
 func main() {
 
 	fmt.Println("...main...")
 
 	http.HandleFunc("/about", About)
+	http.HandleFunc("/contact/{id}", Contact)
+	http.HandleFunc("/contact/", Contact)
 	err := http.ListenAndServe(":4041", nil)
 	fmt.Println("Server is listening on port :4040")
 	if err != nil {

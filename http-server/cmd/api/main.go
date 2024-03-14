@@ -46,7 +46,6 @@ func middleware(next http.Handler) http.Handler {
 func main() {
 
 	fmt.Println("...main...")
-	http.Handle("/", middleware)
 	http.HandleFunc("/about", About)
 	http.HandleFunc("/contact/{id}", Contact)
 	http.HandleFunc("/contact/", Contact)

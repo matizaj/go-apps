@@ -7,9 +7,6 @@ import (
 )
 
 func main() {
-	if len(os.Args) > 1 {
-		fmt.Println(hello.SayHello(os.Args[1]))
-	} else {
-		fmt.Println("Hello, goblin!")
-	}
+	fmt.Println(hello.SayHello(os.Args[1:]))
+
 }

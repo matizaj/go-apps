@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	uuid "github.com/satori/go.uuid"
 	"io"
 	"net/http"
 	"os"
@@ -114,6 +115,19 @@ func readCookie(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Fprintln(w, "COOKIE: ", c)
 }
+
+func session(w http.ResponseWriter, r *http.Request) {
+	c, err := r.Cookie("seesion")
+	if err == http.ErrNoCookie {
+		id := uuid.NewV4()
+		c = &http.Cookie{
+			Name:     "session",
+			Value:    id.String(),
+			HttpOnly: true,
+		}
+	}
+	http.SetCookie(w, c)
+}
 func main() {
 	//http.Handle("/", http.FileServer(http.Dir(".")))
 	http.Handle("/resources/", http.StripPrefix("/resources", http.FileServer(http.Dir("./assets"))))
@@ -125,6 +139,7 @@ func main() {
 	http.HandleFunc("/bar", seeOther)
 	http.HandleFunc("/set", setCookie)
 	http.HandleFunc("/read", readCookie)
+	http.HandleFunc("/session", session)
 	http.Handle("/favicon.ico", http.NotFoundHandler())
 	err := http.ListenAndServe(":5050", nil)
 	if err != nil {

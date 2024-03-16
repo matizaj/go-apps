@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 func dog(w http.ResponseWriter, r *http.Request) {
@@ -76,15 +77,54 @@ func file(w http.ResponseWriter, r *http.Request) {
 	</form>
 `+s)
 }
+func seeOther(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("your method: ", r.Method, "\n\n")
+	//w.Header().Set("Location", "/")
+	//w.WriteHeader(http.StatusSeeOther)
+	http.Redirect(w, r, "/", http.StatusMovedPermanently)
+}
+func setCookie(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("my-cookie")
+	if err == http.ErrNoCookie {
+		fmt.Println("noo cookie")
+		cookie = &http.Cookie{
+			Name:  "my-cookie",
+			Value: "0",
+		}
+	}
+	fmt.Println("after check cookie")
 
+	counter, _ := strconv.Atoi(cookie.Value)
+	fmt.Println("cookie: ", counter)
+
+	fmt.Println("increment")
+	counter++
+	cookie.Value = strconv.Itoa(counter)
+	fmt.Println("set new value cookie")
+	http.SetCookie(w, cookie)
+	io.WriteString(w, cookie.Value)
+}
+
+func readCookie(w http.ResponseWriter, r *http.Request) {
+	c, err := r.Cookie("my-cookie")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNoContent)
+		return
+	}
+
+	fmt.Fprintln(w, "COOKIE: ", c)
+}
 func main() {
-	http.Handle("/", http.FileServer(http.Dir(".")))
+	//http.Handle("/", http.FileServer(http.Dir(".")))
 	http.Handle("/resources/", http.StripPrefix("/resources", http.FileServer(http.Dir("./assets"))))
 	//http.HandleFunc("/", dog)
-	//http.HandleFunc("/matt", matt)
+	http.HandleFunc("/", matt)
 	http.HandleFunc("/query", query)
 	http.HandleFunc("/post", post)
 	http.HandleFunc("/file", file)
+	http.HandleFunc("/bar", seeOther)
+	http.HandleFunc("/set", setCookie)
+	http.HandleFunc("/read", readCookie)
 	http.Handle("/favicon.ico", http.NotFoundHandler())
 	err := http.ListenAndServe(":5050", nil)
 	if err != nil {

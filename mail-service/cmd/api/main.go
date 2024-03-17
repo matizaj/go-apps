@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/matizaj/go-app/mail-service/data/models"
 	uuid "github.com/satori/go.uuid"
 	"io"
 	"net/http"
@@ -119,15 +120,32 @@ func readCookie(w http.ResponseWriter, r *http.Request) {
 func session(w http.ResponseWriter, r *http.Request) {
 	c, err := r.Cookie("seesion")
 	if err == http.ErrNoCookie {
-		id := uuid.NewV4()
+		sid := uuid.NewV4()
 		c = &http.Cookie{
 			Name:     "session",
-			Value:    id.String(),
+			Value:    sid.String(),
 			HttpOnly: true,
 		}
 	}
+	var u models.User
+	if username, ok := dbSession[c.Value]; ok {
+		u = dbUsers[username]
+		io.WriteString(w, u.Username)
+		return
+	}
 	http.SetCookie(w, c)
 }
+
+func check(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("session")
+	if err != nil {
+
+	}
+}
+
+var dbUsers = map[string]models.User{} //userid - user
+var dbSession = map[string]string{}    //sid, uid
+
 func main() {
 	//http.Handle("/", http.FileServer(http.Dir(".")))
 	http.Handle("/resources/", http.StripPrefix("/resources", http.FileServer(http.Dir("./assets"))))

@@ -1,0 +1,9 @@
+GET http://localhost:5050/session
+Accept: application/json
+
+###
+GET http://localhost:5050/session
+Cookie: session=b52f4a40-5eec-4a41-8176-aadc56bb39bd
+Accept: application/json
+
+###

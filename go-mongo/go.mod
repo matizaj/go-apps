@@ -1,4 +1,4 @@
-module go-mongo
+module test/go-mongo
 
 go 1.22.0
 

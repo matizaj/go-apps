@@ -35,6 +35,10 @@ func findOne(w http.ResponseWriter, r *http.Request) {
 	log.Println("result", result)
 	w.Write([]byte(result.Name))
 }
+func hello(w http.ResponseWriter, r *http.Request) {
+
+	w.Write([]byte("hello"))
+}
 
 func main() {
 	mongoClient, err := infrastructure.ConnectToMongo()
@@ -54,7 +58,8 @@ func main() {
 	}()
 	http.HandleFunc("/insert", insertItem)
 	http.HandleFunc("/find", findOne)
-	err = http.ListenAndServe(":9090", nil)
+	http.HandleFunc("/", hello)
+	err = http.ListenAndServe(":80", nil)
 	if err != nil {
 		log.Panicln("App crashed!")
 	}

@@ -1,14 +1,14 @@
 package infrastructure
 
 import (
+	"context"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"golang.org/x/net/context"
 	"log"
 )
 
 func ConnectToMongo() (*mongo.Client, error) {
-	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+	clientOptions := options.Client().ApplyURI("mongodb://mongo:27017")
 	clientOptions.SetAuth(options.Credential{
 		Username: "matt",
 		Password: "password",

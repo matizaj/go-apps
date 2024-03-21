@@ -11,6 +11,17 @@ services:
     ports:
       - "27017:27017"
 
+  go-service:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    restart: always
+    ports:
+      - "8080:80"
+    deploy:
+      mode: replicated
+      replicas: 1
+
   mongo-express:
     image: mongo-express
     restart: always

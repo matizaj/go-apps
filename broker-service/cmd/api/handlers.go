@@ -143,7 +143,11 @@ func (app *Config) authenticate(w http.ResponseWriter, a AuthPayload) {
 	app.writeJson(w, 200, payload)
 }
 func (app *Config) sendMail(w http.ResponseWriter, mail MailPayload) {
-	jsonData, _ := json.MarshalIndent(mail, "", "\t")
+	jsonData, jsonerr := json.MarshalIndent(mail, "", "\t")
+	if jsonerr != nil {
+		log.Println("jsonerr.", jsonerr)
+		return
+	}
 
 	// call the service
 	mailServiceUrl := "http://mail-service/send"

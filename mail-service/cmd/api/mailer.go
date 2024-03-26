@@ -5,6 +5,7 @@ import (
 	"github.com/vanng822/go-premailer/premailer"
 	mail "github.com/xhit/go-simple-mail/v2"
 	"html/template"
+	"log"
 	"time"
 )
 
@@ -43,11 +44,14 @@ func (m *Mail) SendSMTPMessage(msg Message) error {
 	msg.DataMap = data
 	formattedMessage, err := m.buildHtmlMsg(msg)
 	if err != nil {
+
+		log.Println("smpt: ", err)
 		return err
 	}
 
 	plainTextMsg, err := m.buildPlainTextMessage(msg)
 	if err != nil {
+		log.Println("smpt: ", err)
 		return err
 	}
 
@@ -63,6 +67,7 @@ func (m *Mail) SendSMTPMessage(msg Message) error {
 
 	smtpClient, err := server.Connect()
 	if err != nil {
+		log.Println("smpt: ", err)
 		return err
 	}
 
@@ -77,6 +82,8 @@ func (m *Mail) SendSMTPMessage(msg Message) error {
 
 	err = email.Send(smtpClient)
 	if err != nil {
+
+		log.Println("smpt: ", err)
 		return err
 	}
 	return nil

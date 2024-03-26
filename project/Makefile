@@ -3,7 +3,7 @@ FRONT_END_BINARY=frontApp.exe
 BROKER_BINARY=brokerApp
 AUTH_BINARY=authApp
 LOGGER_BINARY=loggerApp
-MAIL_BINARY=loggerApp
+MAIL_BINARY=mailApp
 
 ## up: starts all containers in the background without forcing build
 up:

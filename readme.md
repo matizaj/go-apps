@@ -1,1 +1,3 @@
-Microservices in GO
+Microservices in Golang
+
+docker, kubernetes, rest, grpc

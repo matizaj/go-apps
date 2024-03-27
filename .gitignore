@@ -13,6 +13,7 @@
 *.exe
 */db-data/postgres/*
 */db-data/mongo/*
+*/db-data/rabbitmq/*
 .*.swp
 core
 *.cgo*.go

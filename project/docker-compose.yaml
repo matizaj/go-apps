@@ -82,6 +82,15 @@ services:
       mode: replicated
       replicas: 1
 
+  listener-service:
+    build:
+      context: ../listener-service
+      dockerfile: ../listener-service/listener-service.dockerfile
+    restart: always
+    deploy:
+      mode: replicated
+      replicas: 1
+
   mailhog:
     image: 'mailhog/mailhog:latest'
     ports:

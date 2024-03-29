@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/matizaj/go-app/broker-service/event"
 	"log"
 	"net/http"
 )
@@ -49,7 +50,7 @@ func (app *Config) HandleSubmission(w http.ResponseWriter, r *http.Request) {
 	case "auth":
 		app.authenticate(w, reqPayload.Auth)
 	case "log":
-		app.logItem(w, reqPayload.Log)
+		app.logEventRabbit(w, reqPayload.Log)
 	case "mail":
 		app.sendMail(w, reqPayload.Mail)
 	default:
@@ -182,4 +183,36 @@ func (app *Config) sendMail(w http.ResponseWriter, mail MailPayload) {
 	payload.Message = "messge send to " + mail.To
 
 	app.writeJson(w, http.StatusOK, payload)
+}
+
+func (app *Config) logEventRabbit(w http.ResponseWriter, l LogPayload) {
+	err := app.pushToQueue(l.Name, l.Data)
+	if err != nil {
+		app.errorJson(w, err)
+		return
+	}
+
+	var payload jsonResponse
+	payload.Error = false
+	payload.Message = "logged via RabbitMQ"
+	app.writeJson(w, http.StatusOK, payload)
+}
+
+func (app *Config) pushToQueue(name, msg string) error {
+	emitter, err := event.NewEventEmitter(app.Queue)
+	if err != nil {
+		return err
+	}
+
+	payload := LogPayload{
+		Name: name,
+		Data: msg,
+	}
+
+	j, _ := json.MarshalIndent(&payload, "", "\t")
+	err = emitter.Push(string(j), "log.INFO")
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -14,6 +14,7 @@
 */db-data/postgres/*
 */db-data/mongo/*
 */db-data/rabbitmq/*
+*/db-data/mongo-v2/*
 .*.swp
 core
 *.cgo*.go

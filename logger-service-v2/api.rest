@@ -1,0 +1,5 @@
+GET http://localhost:8090/api/v2/bye/42
+Accept: application/json
+Authorization: Bearer token
+
+###

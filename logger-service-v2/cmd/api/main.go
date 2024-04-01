@@ -55,10 +55,21 @@ func connectToMongo() (*mongo.Client, error) {
 
 func (app *Config) serve() {
 	log.Println("Starting logging service on port ", webPort)
-	http.HandleFunc("/", app.Hello)
-	err := http.ListenAndServe(fmt.Sprintf(":%s", webPort), nil)
-	if err != nil {
-		log.Panicf("logger service cant start %s", err)
-	}
 
+	middlewareChain := MiddlewareChain(RequestLoggerMiddleware, RequireAuthMiddleware)
+	router := http.NewServeMux()
+	router.HandleFunc("GET /bye/{id}", func(w http.ResponseWriter, r *http.Request) {
+		id := r.PathValue("id")
+		w.Write([]byte(" this is my id: " + id))
+	})
+	v2 := http.NewServeMux()
+	v2.Handle("/api/v2", http.StripPrefix("/api/v2", router))
+	server := http.Server{
+		Addr:    fmt.Sprintf(":%s", webPort),
+		Handler: middlewareChain(router),
+	}
+	err := server.ListenAndServe()
+	if err != nil {
+		log.Panicf("logger service api cant start %s", err)
+	}
 }

@@ -1,6 +1,10 @@
 package config
 
-import "os"
+import (
+	"fmt"
+	"github.com/lpernett/godotenv"
+	"os"
+)
 
 type Config struct {
 	PublicHost string
@@ -11,9 +15,17 @@ type Config struct {
 	DBName     string
 }
 
+var Envs = initConfig()
+
 func initConfig() Config {
+	godotenv.Load()
 	return Config{
 		PublicHost: getEnv("PUBLIC_HOST", "http://localhost"),
+		Port:       getEnv("PORT", "8099"),
+		DBUser:     getEnv("DB_USER", "root"),
+		DBPassword: getEnv("DB_PASSWORD", "password"),
+		DBName:     getEnv("DB_NAME", "ECOM"),
+		DBAddress:  fmt.Sprintf("%s:%s", getEnv("DB_HOST", "127.0.0.1"), getEnv("DB_PORT", "3306")),
 	}
 
 }

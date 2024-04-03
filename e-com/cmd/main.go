@@ -18,7 +18,6 @@ func main() {
 		User:                 config.Envs.DBUser,
 		Passwd:               config.Envs.DBPassword,
 		Addr:                 config.Envs.DBAddress,
-		DBName:               config.Envs.DBName,
 		Net:                  "tcp",
 		AllowNativePasswords: true,
 		ParseTime:            true,
@@ -38,6 +37,7 @@ func main() {
 }
 
 func initStorage(db *sql.DB) error {
+	log.Println("ping db")
 	err := db.Ping()
 	if err != nil {
 		log.Println("cant ping db", err)

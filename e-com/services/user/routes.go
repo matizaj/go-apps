@@ -1,6 +1,9 @@
 package user
 
-import "net/http"
+import (
+	"github.com/matizaj/go-app/e-com/types"
+	"net/http"
+)
 
 type Handler struct{}
 
@@ -21,5 +24,10 @@ func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
 
 }
 func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
+	// get json payload
+	var payload types.RegisterUserPayload
+	if err
+	// check if the user exist
+	// create new user or drop req
 
 }

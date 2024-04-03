@@ -2,6 +2,7 @@ package user
 
 import (
 	"github.com/matizaj/go-app/e-com/types"
+	"github.com/matizaj/go-app/e-com/utils"
 	"net/http"
 )
 
@@ -26,8 +27,11 @@ func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	// get json payload
 	var payload types.RegisterUserPayload
-	if err
+	if err := utils.ParseJson(r, payload); err != nil {
+		utils.WriteError(w, http.StatusBadRequest, err)
+	}
 	// check if the user exist
+
 	// create new user or drop req
 
 }

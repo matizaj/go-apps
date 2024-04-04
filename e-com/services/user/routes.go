@@ -1,15 +1,19 @@
 package user
 
 import (
+	"fmt"
+	"github.com/matizaj/go-app/e-com/services/auth"
 	"github.com/matizaj/go-app/e-com/types"
 	"github.com/matizaj/go-app/e-com/utils"
 	"net/http"
 )
 
-type Handler struct{}
+type Handler struct {
+	repository types.UserRepository
+}
 
-func NewHandler() *Handler {
-	return &Handler{}
+func NewHandler(repo types.UserRepository) *Handler {
+	return &Handler{repository: repo}
 }
 
 func (h *Handler) RegisterRoute(router *http.ServeMux) {
@@ -31,7 +35,26 @@ func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 		utils.WriteError(w, http.StatusBadRequest, err)
 	}
 	// check if the user exist
-
+	_, err := h.repository.GetUserByEmail(payload.Email)
+	if err != nil {
+		utils.WriteError(w, 500, fmt.Errorf("something went wrong"))
+		return
+	}
 	// create new user or drop req
-
+	hashedPassword, err := auth.HashPassword(payload.Password)
+	if err != nil {
+		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("hash password failed"))
+		return
+	}
+	err = h.repository.CreateUser(types.User{
+		FirstName: payload.FirstName,
+		LastName:  payload.LastName,
+		Email:     payload.Email,
+		Password:  hashedPassword,
+	})
+	if err != nil {
+		utils.WriteError(w, 500, fmt.Errorf("cant create user"))
+		return
+	}
+	utils.WriteJson(w, http.StatusCreated, nil)
 }

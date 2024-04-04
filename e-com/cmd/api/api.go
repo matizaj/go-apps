@@ -22,7 +22,8 @@ func NewApiServer(addr string, db *sql.DB) *ApiServer {
 func (s *ApiServer) Run() error {
 	router := http.NewServeMux()
 
-	userHandler := user.NewHandler()
+	userRepo := user.NewStore(s.db)
+	userHandler := user.NewHandler(userRepo)
 	userHandler.RegisterRoute(router)
 
 	log.Println("Server listening on port 8099")

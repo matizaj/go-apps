@@ -2,6 +2,7 @@ package user
 
 import (
 	"fmt"
+	"github.com/go-playground/validator/v10"
 	"github.com/matizaj/go-app/e-com/services/auth"
 	"github.com/matizaj/go-app/e-com/types"
 	"github.com/matizaj/go-app/e-com/utils"
@@ -31,8 +32,14 @@ func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	// get json payload
 	var payload types.RegisterUserPayload
-	if err := utils.ParseJson(r, payload); err != nil {
+	if err := utils.ParseJson(r, &payload); err != nil {
 		utils.WriteError(w, http.StatusBadRequest, err)
+	}
+
+	// validate payload
+	if err := utils.Validate.Struct(payload); err != nil {
+		errors := err.(validator.ValidationErrors)
+		utils.WriteError(w, http.StatusBadRequest, fmt.Errorf("invalid payload: %v", errors))
 	}
 	// check if the user exist
 	_, err := h.repository.GetUserByEmail(payload.Email)

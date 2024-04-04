@@ -3,8 +3,11 @@ package utils
 import (
 	"encoding/json"
 	"errors"
+	"github.com/go-playground/validator/v10"
 	"net/http"
 )
+
+var Validate = validator.New()
 
 func ParseJson(r *http.Request, payload any) error {
 	if r.Body == nil {

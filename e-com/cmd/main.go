@@ -30,7 +30,7 @@ func main() {
 	}
 	log.Println("afret db")
 
-	server := api.NewApiServer(fmt.Sprintf(":%s", webPort), nil)
+	server := api.NewApiServer(fmt.Sprintf(":%s", webPort), db)
 	err = server.Run()
 	if err != nil {
 		log.Panicln("Server cant start: ", err)

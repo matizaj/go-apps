@@ -45,8 +45,8 @@ func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 	}
 	// check if the user exist
 	_, err := h.repository.GetUserByEmail(payload.Email)
-	if err != nil {
-		utils.WriteError(w, 500, fmt.Errorf("something went wrong"))
+	if err == nil {
+		utils.WriteError(w, 500, fmt.Errorf("user %s already exists", payload.Email))
 		return
 	}
 	// create new user or drop req

@@ -16,24 +16,29 @@ func NewStore(db *sql.DB) *Store {
 }
 
 func (s *Store) GetUserByEmail(email string) (*types.User, error) {
-	rows, err := s.db.Query("select * from users where email=?", email)
+	q := `select * from users where email = ?`
+	rows, err := s.db.Query(q, email)
 	if err != nil {
+		log.Println("err", err)
 		return nil, err
 	}
-	u := new(types.User) // empty pointer to user
+
+	u := new(types.User)
 	for rows.Next() {
-		u, err = scanRowIntoUser(rows)
+		u, err = scanRowsIntoUser(rows)
 		if err != nil {
 			return nil, err
 		}
 	}
+
 	if u.Id == 0 {
 		return nil, fmt.Errorf("user not found")
 	}
+
 	return u, nil
 }
 
-func scanRowIntoUser(rows *sql.Rows) (*types.User, error) {
+func scanRowsIntoUser(rows *sql.Rows) (*types.User, error) {
 	user := new(types.User)
 	err := rows.Scan(
 		&user.Id,
@@ -56,7 +61,7 @@ func (s *Store) GetUserById(id int) (*types.User, error) {
 	}
 	u := new(types.User) // empty pointer to user
 	for rows.Next() {
-		u, err = scanRowIntoUser(rows)
+		u, err = scanRowsIntoUser(rows)
 		if err != nil {
 			return nil, err
 		}

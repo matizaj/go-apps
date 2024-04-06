@@ -27,5 +27,9 @@ func (s *ApiServer) Run() error {
 	userHandler.RegisterRoute(router)
 
 	log.Println("Server listening on port 8099")
-	return http.ListenAndServe(s.addr, router)
+	err := http.ListenAndServe(s.addr, router)
+	if err != nil {
+		log.Println("hewre", err)
+	}
+	return err
 }

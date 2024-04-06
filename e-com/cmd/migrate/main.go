@@ -18,6 +18,7 @@ func main() {
 		User:                 config.Envs.DBUser,
 		Passwd:               config.Envs.DBPassword,
 		Addr:                 config.Envs.DBAddress,
+		DBName:               config.Envs.DBName,
 		Net:                  "tcp",
 		AllowNativePasswords: true,
 		ParseTime:            true,
@@ -40,12 +41,14 @@ func main() {
 
 	cmd := os.Args[len(os.Args)-1]
 	if cmd == "up" {
+		log.Println("migration up")
 		if err := m.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
 			log.Fatal(err)
 		}
 	}
 	if cmd == "down" {
-		if err := m.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
+		log.Println("migration down")
+		if err := m.Down(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
 			log.Fatal(err)
 		}
 	}

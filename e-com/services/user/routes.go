@@ -6,6 +6,7 @@ import (
 	"github.com/matizaj/go-app/e-com/services/auth"
 	"github.com/matizaj/go-app/e-com/types"
 	"github.com/matizaj/go-app/e-com/utils"
+	"log"
 	"net/http"
 )
 
@@ -30,6 +31,7 @@ func (h *Handler) handleLogin(w http.ResponseWriter, r *http.Request) {
 
 }
 func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
+	log.Println(" registering...")
 	// get json payload
 	var payload types.RegisterUserPayload
 	if err := utils.ParseJson(r, &payload); err != nil {
@@ -53,6 +55,7 @@ func (h *Handler) handleRegister(w http.ResponseWriter, r *http.Request) {
 		utils.WriteError(w, http.StatusInternalServerError, fmt.Errorf("hash password failed"))
 		return
 	}
+	log.Println("b4 c u ")
 	err = h.repository.CreateUser(types.User{
 		FirstName: payload.FirstName,
 		LastName:  payload.LastName,

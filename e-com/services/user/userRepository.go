@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/matizaj/go-app/e-com/types"
+	"log"
 )
 
 type Store struct {
@@ -66,8 +67,10 @@ func (s *Store) GetUserById(id int) (*types.User, error) {
 	return u, nil
 }
 func (s *Store) CreateUser(user types.User) error {
+	log.Println("create user")
 	_, err := s.db.Exec("INSERT INTO users (firstName, lastName, email, password) VALUES (?, ?, ?, ?)", user.FirstName, user.LastName, user.Email, user.Password)
 	if err != nil {
+		log.Println("err", err)
 		return err
 	}
 

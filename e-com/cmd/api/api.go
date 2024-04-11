@@ -2,6 +2,9 @@ package api
 
 import (
 	"database/sql"
+	"github.com/matizaj/go-app/e-com/services/cart"
+	"github.com/matizaj/go-app/e-com/services/order"
+	"github.com/matizaj/go-app/e-com/services/product"
 	"github.com/matizaj/go-app/e-com/services/user"
 	"log"
 	"net/http"
@@ -25,6 +28,14 @@ func (s *ApiServer) Run() error {
 	userRepo := user.NewStore(s.db)
 	userHandler := user.NewHandler(userRepo)
 	userHandler.RegisterRoute(router)
+
+	productRepo := product.NewStore(s.db)
+	productHandler := product.NewHandler(productRepo)
+	productHandler.RegisterRoutes(router)
+
+	orderRepo := order.NewStore(s.db)
+	cartHandler := cart.NewHandler(orderRepo, productRepo, userRepo)
+	cartHandler.RegisterHandler(router)
 
 	log.Println("Server listening on port 8099")
 	err := http.ListenAndServe(s.addr, router)

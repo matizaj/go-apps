@@ -1,3 +1,50 @@
+POST http://localhost:8099/cart/checkout
+Content-Type: application/json
+token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcnRlZEF0IjoxNzEyNjkzNjg1LCJ1c2VySWQiOiIxIn0.zC6BlUVVX2QotfN2r59xgiCDDb6b96D8_jZsa9tNZgM
+
+{
+  "cart_item": [
+    {
+      "productId": 1,
+      "quantity": 1
+    },
+    {
+      "productId": 2,
+      "quantity": 2
+    }
+  ]
+}
+
+###
+GET http://localhost:8099/products-id
+Accept: application/json
+
+###
+POST http://localhost:8099/products
+Content-Type: application/json
+
+{
+  "name": "rope-80m",
+  "description": "climbing gear",
+  "image": "no image",
+  "price": 899.99,
+  "qty": 1
+}
+
+###
+GET http://localhost:8099/products
+Accept: application/json
+
+###
+POST http://localhost:8099/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "password"
+}
+
+###
 POST http://localhost:8099/register
 Content-Type: application/json
 

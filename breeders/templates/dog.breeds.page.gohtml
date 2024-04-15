@@ -1,10 +1,156 @@
+{{/*{{template "base" .}}*/}}
+
+{{/*    {{define "css"}}*/}}
+{{/*        <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" type="text/css">*/}}
+
+{{/*        {{end}}*/}}
+{{/*{{define "content"}}*/}}
+{{/*    <div class="container">*/}}
+{{/*        <div class="row">*/}}
+{{/*            <div class="col">*/}}
+{{/*                <h3 class="mt-4">Dog breeds</h3>*/}}
+{{/*                <hr>*/}}
+{{/*                <table class="dog-breeds table table-striped">*/}}
+{{/*                    <thead>*/}}
+{{/*                    <tr>*/}}
+{{/*                        <th>Details</th>*/}}
+{{/*                        <th>Breed</th>*/}}
+{{/*                        <th></th>*/}}
+{{/*                        <th></th>*/}}
+{{/*                        <th>*/}}
+{{/*                            <div class="text-center">Average weight lbs</div>*/}}
+{{/*                        </th>*/}}
+{{/*                        <th>*/}}
+{{/*                            <div class="text-center">Average Lifespan</div>*/}}
+{{/*                        </th>*/}}
+{{/*                        <th></th>*/}}
+{{/*                        <th></th>*/}}
+{{/*                        <th></th>*/}}
+{{/*                    </tr>*/}}
+{{/*                    </thead>*/}}
+{{/*                </table>*/}}
+{{/*            </div>*/}}
+{{/*        </div>*/}}
+{{/*    </div>*/}}
+{{/*{{end}}*/}}
+{{/*{{define "js"}}*/}}
+{{/*    <script>*/}}
+{{/*        document.addEventListener("DOMContentLoaded", ()=> {*/}}
+{{/*            fetch('/api/dog-breeds', {method:'get'})*/}}
+{{/*                .then(response => response.json())*/}}
+{{/*                .then(response => {*/}}
+{{/*                    if (!response.length) {*/}}
+{{/*                        return;*/}}
+{{/*                    }*/}}
+{{/*                    new window.simpleDatatables.DataTable(".dog-breeds", {*/}}
+{{/*                        perPage:25,*/}}
+{{/*                        columns: [*/}}
+{{/*                            {*/}}
+{{/*                                select: 1,*/}}
+{{/*                                render: function (data, td, rowIndex, cellIndex) {*/}}
+{{/*                                    return `<a href="/dog-breeds/${response[rowIndex].id}">${data[0].data}</a>`*/}}
+{{/*                                }*/}}
+{{/*                            },*/}}
+{{/*                            {*/}}
+{{/*                                select: 4,*/}}
+{{/*                                render: function (data, td, rowIndex, cellIndex) {*/}}
+{{/*                                    return `<div class="text-center">${data[0].data}</div>}`*/}}
+{{/*                                }*/}}
+{{/*                            },*/}}
+{{/*                            {*/}}
+{{/*                                select: 5,*/}}
+{{/*                                render: function (data, td, rowIndex, cellIndex) {*/}}
+{{/*                                    return `<div class="text-center">${data[0].data}</div>}`*/}}
+{{/*                                }*/}}
+{{/*                            },*/}}
+{{/*                            {select: [0,2,3,6,7,8], hidden: true}*/}}
+{{/*                        ],*/}}
+{{/*                        data: {*/}}
+{{/*                            data: data.map(item=>Object.values(item))*/}}
+{{/*                        }*/}}
+{{/*                    })*/}}
+{{/*                })*/}}
+{{/*        })*/}}
+{{/*    </script>*/}}
+{{/*{{end}}*/}}
+
 {{template "base" .}}
+
+{{define "css"}}
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" type="text/css">
+{{end}}
+
 {{define "content"}}
     <div class="container">
         <div class="row">
             <div class="col">
-                <h3 class="mt-4">Dog breeds</h3>
+                <h3 class="mt-4">Dog Breeds</h3>
+                <hr>
+
+                <table class="dog-breeds table table-striped table-compact">
+                    <thead>
+                    <tr>
+                        <th>Details</th>
+                        <th>Breed</th>
+                        <th></th>
+                        <th></th>
+                        <th>
+                            <div class="text-center">Average Weight (lbs)</div>
+                        </th>
+                        <th>
+                            <div class="text-center">Average Lifespan (years)</div>
+                        </th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </thead>
+                </table>
             </div>
         </div>
     </div>
+
+{{end}}
+
+{{define "js"}}
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" type="text/javascript"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function(){
+            fetch("/api/dog-breeds")
+                .then(response => response.json())
+                .then(
+                    response => {
+                        if (!response.length) {
+                            return;
+                        }
+                        new window.simpleDatatables.DataTable(".dog-breeds", {
+                            perPage: 25,
+                            columns: [
+                                {
+                                    select: 1,
+                                    render: function (data, td, rowIndex, cellIndex) {
+                                        return `<a href="/dog-breeds/${response[rowIndex].id}">${data[0].data}</a>`;
+                                    }
+                                },
+                                {
+                                    select: 4,
+                                    render: function (data, td, rowIndex, cellIndex) {
+                                        return `<div class="text-center">${data[0].data}</div>`;
+                                    }
+                                },
+                                {
+                                    select: 5,
+                                    render: function (data, td, rowIndex, cellIndex) {
+                                        return `<div class="text-center">${data[0].data}</div>`;
+                                    }
+                                },
+                                {select: [0, 2, 3, 6, 7, 8], hidden: true},
+                            ],
+                            data: {
+                                data: response.map(item => Object.values(item))
+                            }
+                        })
+                    }
+                )
+        })
+    </script>
 {{end}}

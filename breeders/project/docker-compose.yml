@@ -1,0 +1,15 @@
+version: '3'
+services:
+  mariadb:
+    image: 'mariadb:10'
+    ports:
+      - "3336:3306"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: breeders
+      MYSQL_USER: breeders
+      MYSQL_PASSWORD: mypassword
+    volumes:
+      - ./db-data/mariadb:/var/lib/mysql
+      - ./breeders_mysql.sql:/docker-entrypoint-initdb.d/create_tables.sql

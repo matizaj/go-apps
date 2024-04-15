@@ -1,18 +1,46 @@
 package models
 
-import "time"
+import (
+	"database/sql"
+	"time"
+)
+
+var repo Repository
+
+type Models struct {
+	DogBreed DogBreed
+}
+
+func New(connection *sql.DB) *Models {
+	repo = newMysqlRepository(connection)
+	return &Models{
+		DogBreed: DogBreed{},
+	}
+}
+func NewTest() *Models {
+	repo = newTestRepository(nil)
+
+	return &Models{
+		DogBreed: DogBreed{},
+	}
+}
 
 type DogBreed struct {
 	Id               int    `json:"id"`
 	Breed            string `json:"breed"`
 	WeightLowLbs     int    `json:"weight_low_lbs"`
-	WeightMaxLbs     int    `json:"weight_max_lbs"`
+	WeightHighLbs    int    `json:"weight_heigh_lbs"`
 	AverageWeight    int    `json:"average_weight"`
 	Lifespan         int    `json:"average_lifespan"`
 	Details          string `json:"details"`
 	AlternateNames   string `json:"alternate_names"`
 	GeographicOrigin string `json:"geographic_origin"`
 }
+
+func (d *DogBreed) GetAll() ([]*DogBreed, error) {
+	return repo.AllDogBreeds()
+}
+
 type CatBreed struct {
 	Id               int    `json:"id"`
 	Breed            string `json:"breed"`

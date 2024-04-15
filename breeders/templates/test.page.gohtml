@@ -11,8 +11,26 @@
                     <a href="javascript:void(0);" id="dog-factory-btn" class="btn btn-outline-secondary">Get a dog from factory</a>
                     <a href="javascript:void(0);" id="cat-factory-btn" class="btn btn-outline-secondary">Get a cat from factory</a>
                 </div>
-                <div class="mt-2" style="outline: 1px solid silver; padding:2em;">
+                <div class="mt-2" style="outline: 1px solid silver; padding: 2em;">
                     <pre id="dog-factory-output"><span class="text-muted">Nothing received yet...</span></pre>
+                </div>
+
+                <hr class="mt-4">
+
+                <h3 class="mt-3">Abstract Factory</h3>
+
+                <div>
+                    <a href="javascript:void(0);" id="dog-abstract-btn" class="btn btn-outline-secondary">
+                        Get a dog from abstract factory
+                    </a>
+
+                    <a href="javascript:void(0);" id="cat-abstract-btn" class="btn btn-outline-secondary">
+                        Get a cat from abstract factory
+                    </a>
+                </div>
+
+                <div class="mt-2" style="outline: 1px solid silver; padding: 2em;">
+                    <pre id="abstract-output"><span class="text-muted">Nothing received yet...</span></pre>
                 </div>
 
             </div>
@@ -21,35 +39,69 @@
 {{end}}
 
 {{define "js"}}
-<script>
-    const dogFactoryBtn = document.getElementById("dog-factory-btn");
-    const catFactoryBtn = document.getElementById("cat-factory-btn");
-    const dogFactoryOutput = document.getElementById("dog-factory-output");
+    <script>
+        let dogFactoryButton = document.getElementById("dog-factory-btn");
+        let catFactoryButton = document.getElementById("cat-factory-btn");
+        let dogFactoryOutput = document.getElementById("dog-factory-output");
 
-    document.addEventListener("DOMContentLoaded", ()=> {
-        dogFactoryBtn.addEventListener("click", ()=>{
-            fetch("/api/dog-from-factory", {method:"get"})
-                .then(resp =>resp.json())
-                .then(data => {
-                    if(data.error) {
-                        dogFactoryOutput.innerHTML=data.error
-                    }else {
-                        dogFactoryOutput.innerHTML=JSON.stringify(data, undefined,4)
-                    }
+        let dogAbstractBtn = document.getElementById("dog-abstract-btn");
+        let catAbstractBtn = document.getElementById("cat-abstract-btn");
+        let abstractFactoryOutput = document.getElementById("abstract-output");
+
+        document.addEventListener("DOMContentLoaded", function() {
+            dogFactoryButton.addEventListener("click", function() {
+                fetch("/api/dog-from-factory", {method: 'get'})
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.error) {
+                            dogFactoryOutput.innerHTML = data.error;
+                        } else {
+                            dogFactoryOutput.innerHTML = JSON.stringify(data, undefined, 4);
+                        }
+                    })
+            })
+
+            catFactoryButton.addEventListener("click", function() {
+                fetch("/api/cat-from-factory", {method: 'get'})
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.error) {
+                            dogFactoryOutput.innerHTML = data.error;
+                        } else {
+                            dogFactoryOutput.innerHTML = JSON.stringify(data, undefined, 4);
+                        }
+                    })
+            })
+
+            dogAbstractBtn.addEventListener("click", function() {
+                fetch("/api/dog-from-afactory", {method: 'get', headers:{"Content-Type":"application/json"}})
+                    .then((response) => {
+                        console.log("resp", response)
+                        return response.json()
+                    })
+                    .then((data) => {
+                        console.log("d?@@@",data)
+                        if (data.error) {
+                            abstractFactoryOutput.innerHTML = data.error;
+                        } else {
+                            abstractFactoryOutput.innerHTML = JSON.stringify(data);
+                        }
+                    }).catch(err => console.log(err))
+            })
+
+            catAbstractBtn.addEventListener("click", function() {
+                fetch("/api/cat-from-afactory", {method: 'get'})
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.error) {
+                            abstractFactoryOutput.innerHTML = data.error;
+                        } else {
+                            abstractFactoryOutput.innerHTML = JSON.stringify(data, undefined, 4);
+                        }
+                    })
             })
         })
-        catFactoryBtn.addEventListener("click", ()=>{
-            fetch("/api/cat-from-factory", {method:"get"})
-                .then(resp =>resp.json())
-                .then(data => {
-                    if(data.error) {
-                        dogFactoryOutput.innerHTML=data.error
-                    }else {
-                        dogFactoryOutput.innerHTML=JSON.stringify(data, undefined,4)
-                    }
-            })
-        })
-    })
 
-</script>
+    </script>
+
 {{end}}

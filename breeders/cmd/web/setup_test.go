@@ -1,17 +1,17 @@
 package main
 
 import (
-	"github.com/matizaj/go-apps/go-breeders/models"
+	"github.com/matizaj/go-apps/go-breeders/configuration"
 	"os"
 	"testing"
 )
 
-var testApp Application
+var testApp application
 
 func TestMain(m *testing.M) {
 
-	testApp = Application{
-		Models: models.NewTest(),
+	testApp = application{
+		App: configuration.New(nil),
 	}
 
 	os.Exit(m.Run())

@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/matizaj/go-apps/go-breeders/models"
+	"github.com/matizaj/go-apps/go-breeders/configuration"
 	"html/template"
 	"log"
 	"net/http"
@@ -12,10 +12,11 @@ import (
 
 const port = ":4000"
 
-type Application struct {
+type application struct {
 	templateMap map[string]*template.Template
 	config      appConfig
-	Models      *models.Models
+	App         *configuration.Application
+	catService  *RemoteService
 }
 
 type appConfig struct {
@@ -24,7 +25,7 @@ type appConfig struct {
 }
 
 func main() {
-	app := Application{
+	app := application{
 		templateMap: make(map[string]*template.Template),
 	}
 	flag.BoolVar(&app.config.useCache, "cache", false, "use template cache")
@@ -37,7 +38,11 @@ func main() {
 		log.Panicln(err)
 	}
 
-	app.Models = models.New(db)
+	jsonBackend := &jsonBackend{}
+	jsonAdapter := &RemoteService{Remote: jsonBackend}
+
+	app.App = configuration.New(db)
+	app.catService = jsonAdapter
 
 	router := http.NewServeMux()
 	app.RegisterRoute(router)

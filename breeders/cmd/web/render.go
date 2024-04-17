@@ -12,7 +12,7 @@ type templateData struct {
 	Data map[string]any
 }
 
-func (app *Application) render(w http.ResponseWriter, t string, td *templateData) {
+func (app *application) render(w http.ResponseWriter, t string, td *templateData) {
 	var tmpl *template.Template
 
 	// if we are using template cache, try to get the template from map
@@ -43,7 +43,7 @@ func (app *Application) render(w http.ResponseWriter, t string, td *templateData
 	}
 }
 
-func (app *Application) buildTemplateFromDisk(t string) (*template.Template, error) {
+func (app *application) buildTemplateFromDisk(t string) (*template.Template, error) {
 	path, err := os.Getwd()
 	if err != nil {
 		log.Println(err)

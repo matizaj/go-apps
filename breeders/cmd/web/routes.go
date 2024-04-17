@@ -15,7 +15,7 @@ import (
 //	return &Handler{}
 //}
 
-func (app *Application) RegisterRoute(router *http.ServeMux) {
+func (app *application) RegisterRoute(router *http.ServeMux) {
 	directoryPath := "./static"
 	_, err := os.Stat(directoryPath)
 	if os.IsNotExist(err) {
@@ -30,41 +30,34 @@ func (app *Application) RegisterRoute(router *http.ServeMux) {
 	router.HandleFunc("GET /api/dog-from-afactory", app.createDogFromAbsFac)
 	router.HandleFunc("GET /api/dog-from-abs", app.createDogFromAbs)
 	router.HandleFunc("GET /api/cat-from-afactory", app.createCatFromAbsFac)
+	router.HandleFunc("GET /api/{pet}", app.createPetWithBuilder)
 	router.HandleFunc("GET /api/dog-breeds", app.getAllDogBreeds)
+	router.HandleFunc("GET /api/cat-breeds", app.GetAllCatBreeds)
 	router.HandleFunc("GET /home", app.handleHello)
 	router.HandleFunc("GET /{page}", app.handlePage)
 
 }
-func (app *Application) handleHello(w http.ResponseWriter, r *http.Request) {
+func (app *application) handleHello(w http.ResponseWriter, r *http.Request) {
 	app.render(w, "home.page.gohtml", nil)
 }
 
-func (app *Application) handlePage(w http.ResponseWriter, r *http.Request) {
+func (app *application) handlePage(w http.ResponseWriter, r *http.Request) {
 	page := r.PathValue("page")
 	app.render(w, fmt.Sprintf("%s.page.gohtml", page), nil)
 }
 
-func (app *Application) createDogFromFactory(w http.ResponseWriter, r *http.Request) {
+func (app *application) createDogFromFactory(w http.ResponseWriter, r *http.Request) {
 	dog := pets.NewPet("dog")
 	utils.WriteJson(w, http.StatusOK, dog)
 }
-func (app *Application) createCatFromFactory(w http.ResponseWriter, r *http.Request) {
+func (app *application) createCatFromFactory(w http.ResponseWriter, r *http.Request) {
 	dog := pets.NewPet("cat")
 	utils.WriteJson(w, http.StatusOK, dog)
 }
-func (app *Application) testPattern(w http.ResponseWriter, r *http.Request) {
+func (app *application) testPattern(w http.ResponseWriter, r *http.Request) {
 	app.render(w, "test.page.gohtml", nil)
 }
-func (app *Application) createDogFromAbsFac(w http.ResponseWriter, r *http.Request) {
-	dog, err := pets.NewPetFromAbstractFactory("dog")
-	fmt.Println("dog", dog)
-	if err != nil {
-		utils.ErrorJson(w, err, http.StatusInternalServerError)
-	}
-	utils.WriteJson(w, http.StatusOK, dog)
-	app.render(w, "test.page.gohtml", nil)
-}
-func (app *Application) createDogFromAbs(w http.ResponseWriter, r *http.Request) {
+func (app *application) createDogFromAbsFac(w http.ResponseWriter, r *http.Request) {
 	dog, err := pets.NewPetFromAbstractFactory("dog")
 	fmt.Println("dog", dog)
 	if err != nil {
@@ -72,19 +65,50 @@ func (app *Application) createDogFromAbs(w http.ResponseWriter, r *http.Request)
 	}
 	utils.WriteJson(w, http.StatusOK, dog)
 }
-func (app *Application) createCatFromAbsFac(w http.ResponseWriter, r *http.Request) {
+func (app *application) createDogFromAbs(w http.ResponseWriter, r *http.Request) {
+	dog, err := pets.NewPetFromAbstractFactory("dog")
+	fmt.Println("dog", dog)
+	if err != nil {
+		utils.ErrorJson(w, err, http.StatusInternalServerError)
+	}
+	utils.WriteJson(w, http.StatusOK, dog)
+}
+func (app *application) createCatFromAbsFac(w http.ResponseWriter, r *http.Request) {
 	cat, err := pets.NewPetFromAbstractFactory("cat")
 	if err != nil {
 		utils.ErrorJson(w, err, http.StatusInternalServerError)
 	}
 	utils.WriteJson(w, http.StatusOK, cat)
-	app.render(w, "test.page.gohtml", nil)
 }
-func (app *Application) getAllDogBreeds(w http.ResponseWriter, r *http.Request) {
-	breeds, err := app.Models.DogBreed.GetAll()
+func (app *application) getAllDogBreeds(w http.ResponseWriter, r *http.Request) {
+	breeds, err := app.App.Models.DogBreed.GetAll()
 	if err != nil {
 		utils.ErrorJson(w, err, http.StatusInternalServerError)
 	}
 	utils.WriteJson(w, http.StatusOK, breeds)
+}
+func (app *application) createPetWithBuilder(w http.ResponseWriter, r *http.Request) {
+	pet := r.PathValue("pet")
+	animal, err := pets.NewPetBuilder().
+		SetSpecies(pet).
+		SetBreed("big one").
+		SetWeight(25).
+		SetDescription("some kind of description").
+		SetColor("brown").
+		SetMinWeight(1).
+		SetMaxWeight(9).Build()
+	if err != nil {
+		utils.ErrorJson(w, err, http.StatusInternalServerError)
+	}
 
+	utils.WriteJson(w, http.StatusOK, animal)
+}
+
+func (app *application) GetAllCatBreeds(w http.ResponseWriter, r *http.Request) {
+	cb, err := app.catService.Remote.GetAllCatBreeds()
+	if err != nil {
+		utils.ErrorJson(w, err, http.StatusInternalServerError)
+	}
+
+	utils.WriteJson(w, http.StatusOK, cb)
 }

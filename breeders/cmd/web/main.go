@@ -38,11 +38,13 @@ func main() {
 		log.Panicln(err)
 	}
 
-	jsonBackend := &jsonBackend{}
-	jsonAdapter := &RemoteService{Remote: jsonBackend}
+	//jsonBackend := &jsonBackend{}
+	//jsonAdapter := &RemoteService{Remote: jsonBackend}
 
+	xmlBackend := &xmlBackend{}
+	xmlAdapter := &RemoteService{Remote: xmlBackend}
 	app.App = configuration.New(db)
-	app.catService = jsonAdapter
+	app.catService = xmlAdapter
 
 	router := http.NewServeMux()
 	app.RegisterRoute(router)

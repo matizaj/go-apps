@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/matizaj/go-apps/go-breeders/pets"
 	"github.com/matizaj/go-apps/go-breeders/utils"
+	"log"
 	"net/http"
 )
 
@@ -75,21 +76,27 @@ func (app *application) createPetWithBuilder(w http.ResponseWriter, r *http.Requ
 }
 
 func (app *application) GetAllCatBreeds(w http.ResponseWriter, r *http.Request) {
-	cb, err := app.catService.Remote.GetAllCatBreeds()
+	cb, err := app.App.CatService.Remote.GetAllCatBreeds()
 	if err != nil {
 		utils.ErrorJson(w, err, http.StatusInternalServerError)
+		return
 	}
 
 	utils.WriteJson(w, http.StatusOK, cb)
 }
-func (app *application) AnimalFromAbstractFactory(w http.ResponseWriter, r *http.Request) {
+func (app *application) GetAnimalFromAbstractFactory(w http.ResponseWriter, r *http.Request) {
 	// get speciers from url
-
+	species := r.PathValue("species")
 	// get breed from url
-
+	breed := r.PathValue("breed")
+	log.Println("species & breed", species, breed)
 	// create breed from abs factory
-
+	pet, err := pets.NewPetFromBreedFromAbstractFactory(species, breed)
+	if err != nil {
+		utils.ErrorJson(w, err, http.StatusInternalServerError)
+		return
+	}
 	// write result to Json
 
-	utils.WriteJson(w, http.StatusOK, cb)
+	utils.WriteJson(w, http.StatusOK, pet)
 }

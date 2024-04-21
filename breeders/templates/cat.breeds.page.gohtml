@@ -1,10 +1,92 @@
 {{template "base" .}}
+
+{{- define "title" -}}
+    Go Find a Pet: Cat Breeds
+{{- end -}}
+
+{{define "css"}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-datatables@7.2.0/dist/style.min.css">
+{{end}}
+
 {{define "content"}}
+
+    <picture>
+        <source srcset="/static/cats-in-window.webp" type="image/webp" class="img img-fluid">
+        <img src="/static/cats-in-window.png" alt="cats" class="img-fluid">
+    </picture>
+
     <div class="container">
         <div class="row">
             <div class="col">
-                <h3 class="mt-4">Cat breeds</h3>
+                <h3 class="mt-4">Cat Breeds</h3>
+                <hr>
+
+                <table class="cat-breeds table table-striped table-sm">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>Breed</th>
+                        <th></th>
+                        <th></th>
+                        <th>
+                            <div class="text-center">Average Weight (lbs)</div>
+                        </th>
+                        <th>
+                            <div class="text-center">Average Lifespan (years)</div>
+                        </th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                </table>
+
             </div>
         </div>
     </div>
+
+{{end}}
+
+{{define "js"}}
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.2.0/dist/umd/simple-datatables.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch("/api/cat-breeds").then(
+                response => response.json()
+            ).then(
+                response => {
+                    if (!response.length) {
+                        return
+                    }
+                    new window.simpleDatatables.DataTable(".cat-breeds", {
+                        perPage: 25,
+                        columns: [
+                            {
+                                select: 1,
+                                render: function (data, td, rowIndex, cellIndex) {
+                                    return `<a href="/cat-breeds/${response[rowIndex].id}">${data[0].data}</a>`;
+                                }
+                            },
+                            {
+                                select: 4,
+                                render: function (data, td, rowIndex, cellIndex) {
+                                    return `<div class="text-center">${data[0].data}</div>`;
+                                }
+                            },
+                            {
+                                select: 5,
+                                render: function (data, td, rowIndex, cellIndex) {
+                                    return `<div class="text-center">${data[0].data}</div>`;
+                                }
+                            },
+                            {select: [0, 2, 3, 6, 7, 8], hidden: true},
+                        ],
+                        data: {
+                            data: response.map(item => Object.values(item))
+                        }
+                    })
+                }
+            )
+        })
+    </script>
 {{end}}

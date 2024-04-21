@@ -33,6 +33,46 @@
                     <pre id="abstract-output"><span class="text-muted">Nothing received yet...</span></pre>
                 </div>
 
+                <hr class="mt-4">
+
+                <h3 class="mt-3">Builder</h3>
+
+                <div>
+                    <a href="javascript:void(0);" id="dog-builder-btn" class="btn btn-outline-secondary">
+                        Get a dog from builder
+                    </a>
+
+                    <a href="javascript:void(0);" id="cat-builder-btn" class="btn btn-outline-secondary">
+                        Get a cat from builder
+                    </a>
+                </div>
+
+                <div class="mt-2" style="outline: 1px solid silver; padding: 2em;">
+                    <pre id="abstract-factory-II-output"><span class="text-muted">Nothing received yet...</span></pre>
+                </div>
+                <hr class="mt-4">
+
+                <h3 class="mt-3">Abstract factory II</h3>
+
+                <form action="">
+                    <div class="row mb-3"><label for="species" class="col-sm-2 col-form-label">Species</label>
+                        <select id="species" class="form-select">
+                            <option selected>Choose...</option>
+                            <option value="cat">Cat</option>
+                            <option value="dog">Dog</option>
+                        </select>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="breed" class="col-sm-2 col-form-label">Breed</label>
+                        <input type="text" class="form-control" id="breed"/>
+                    </div>
+                    <a href="javascript:void(0)" id="abstract-factory-ii-button" class="btn btn-outline-secondary">Get from abstract factory II</a>
+                </form>
+
+                <div class="mt-2" style="outline: 1px solid silver; padding: 2em;">
+                    <pre id="abs-factory-II-output"><span class="text-muted">Nothing received yet...</span></pre>
+                </div>
+
             </div>
         </div>
     </div>
@@ -47,6 +87,13 @@
         let dogAbstractBtn = document.getElementById("dog-abstract-btn");
         let catAbstractBtn = document.getElementById("cat-abstract-btn");
         let abstractFactoryOutput = document.getElementById("abstract-output");
+
+        let dogBuilderBtn = document.getElementById("dog-builder-btn");
+        let catBuilderBtn = document.getElementById("cat-builder-btn");
+        let builderOutput = document.getElementById("builder-output");
+
+        let abstractFacIIBtn = document.getElementById("abstract-factory-ii-button");
+        let abstractFacIIoutput = document.getElementById("abs-factory-II-output");
 
         document.addEventListener("DOMContentLoaded", function() {
             dogFactoryButton.addEventListener("click", function() {
@@ -97,6 +144,46 @@
                             abstractFactoryOutput.innerHTML = data.error;
                         } else {
                             abstractFactoryOutput.innerHTML = JSON.stringify(data, undefined, 4);
+                        }
+                    })
+            })
+
+            // builder
+
+            dogBuilderBtn.addEventListener("click", function() {
+                fetch("/api/dog", {method: 'get'})
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.error) {
+                            builderOutput.innerHTML = data.error;
+                        } else {
+                            builderOutput.innerHTML = JSON.stringify(data, undefined, 4);
+                        }
+                    })
+            })
+
+            catBuilderBtn.addEventListener("click", function() {
+                fetch("/api/cat", {method: 'get'})
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.error) {
+                            builderOutput.innerHTML = data.error;
+                        } else {
+                            builderOutput.innerHTML = JSON.stringify(data, undefined, 4);
+                        }
+                    })
+            })
+
+            abstractFacIIBtn.addEventListener("click", function() {
+                const species = document.getElementById("species").value
+                const breed = document.getElementById("breed").value
+                fetch(`/api/animal-from-abstract-factory/${species}/${breed}`, {method: 'get'})
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if (data.error) {
+                            abstractFacIIoutput.innerHTML = data.error;
+                        } else {
+                            abstractFacIIoutput.innerHTML = JSON.stringify(data, undefined, 4);
                         }
                     })
             })

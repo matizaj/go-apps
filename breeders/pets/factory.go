@@ -13,3 +13,14 @@ func NewPet(species string) *models.Pet {
 	}
 	return &pet
 }
+func NewPetWithBreed(species, breed string) *models.Pet {
+	pet := models.Pet{
+		Species:     species,
+		Breed:       breed,
+		MinWeight:   0,
+		MaxWeight:   0,
+		Description: "no description yet",
+		LifeSpan:    0,
+	}
+	return &pet
+}

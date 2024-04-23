@@ -23,6 +23,7 @@ func (app *application) RegisterRoute(router *http.ServeMux) {
 	fileServer := http.FileServer(http.Dir(directoryPath))
 	router.Handle("/static/*", http.StripPrefix("/static", fileServer))
 	router.HandleFunc("GET /test-pattern", app.testPattern)
+	router.HandleFunc("GET /dog-of-month", app.dogOfMonth)
 	router.HandleFunc("GET /api/dog-from-factory", app.createDogFromFactory)
 	router.HandleFunc("GET /api/cat-from-factory", app.createCatFromFactory)
 	router.HandleFunc("GET /api/dog-from-afactory", app.createDogFromAbsFac)

@@ -2,10 +2,12 @@ package main
 
 import (
 	"fmt"
+	"github.com/matizaj/go-apps/go-breeders/models"
 	"github.com/matizaj/go-apps/go-breeders/pets"
 	"github.com/matizaj/go-apps/go-breeders/utils"
 	"log"
 	"net/http"
+	"time"
 )
 
 func (app *application) handleHello(w http.ResponseWriter, r *http.Request) {
@@ -99,4 +101,34 @@ func (app *application) GetAnimalFromAbstractFactory(w http.ResponseWriter, r *h
 	// write result to Json
 
 	utils.WriteJson(w, http.StatusOK, pet)
+}
+
+func (app *application) dogOfMonth(w http.ResponseWriter, r *http.Request) {
+	// get breed
+	breed, _ := app.App.Models.DogBreed.GetBreedByName("German Shepherd Dog")
+	// get the dog otm from db
+	dogOfMonth, _ := app.App.Models.Dog.GetDogOfMonthById(1)
+	// create dog and decorate
+	layout := "2006-01-02"
+	dob, _ := time.Parse(layout, "2023-11-01")
+	dog := models.DogOfMonth{
+		Dog: &models.Dog{
+			Id:               1,
+			Name:             "Sam",
+			BreedId:          breed.Id,
+			Color:            "black",
+			DayOfBirth:       dob,
+			SpayedOrNeutered: 0,
+			Description:      "some cool dog",
+			Weight:           20,
+			Breed:            *breed,
+		},
+		Video: dogOfMonth.Video,
+		Image: dogOfMonth.Image,
+	}
+	// serve page
+	data := make(map[string]any)
+	data["dog"] = dog
+
+	app.render(w, "dog-of-month.page.gohtml", &templateData{Data: data})
 }

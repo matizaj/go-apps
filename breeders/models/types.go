@@ -9,10 +9,17 @@ var repo Repository
 
 type Models struct {
 	DogBreed DogBreed
+	CatBreed CatBreed
+	Dog      Dog
 }
 
 func New(connection *sql.DB) *Models {
-	repo = newMysqlRepository(connection)
+	if connection != nil {
+		repo = newMysqlRepository(connection)
+	} else {
+		repo = newTestRepository(nil)
+	}
+
 	return &Models{
 		DogBreed: DogBreed{},
 	}
@@ -30,27 +37,45 @@ type DogBreed struct {
 	Breed            string `json:"breed"`
 	WeightLowLbs     int    `json:"weight_low_lbs"`
 	WeightHighLbs    int    `json:"weight_heigh_lbs"`
-	AverageWeight    int    `json:"average_weight"`
 	Lifespan         int    `json:"average_lifespan"`
 	Details          string `json:"details"`
 	AlternateNames   string `json:"alternate_names"`
 	GeographicOrigin string `json:"geographic_origin"`
+}
+
+type DogOfMonth struct {
+	Id    int
+	Dog   *Dog
+	Video string
+	Image string
 }
 
 func (d *DogBreed) GetAll() ([]*DogBreed, error) {
 	return repo.AllDogBreeds()
 }
 
+func (d *DogBreed) GetBreedByName(b string) (*DogBreed, error) {
+	return repo.GetBreedByName(b)
+}
+
+func (d *Dog) GetDogOfMonthById(id int) (*DogOfMonth, error) {
+	return repo.GetDogOfMonthById(id)
+}
+
+//func (d *CatBreed) GetBreedByName(b string) (*CatBreed, error) {
+//	return repo.GetBreedByName()
+//}
+
 type CatBreed struct {
-	Id               int    `json:"id"`
-	Breed            string `json:"breed"`
-	WeightLowLbs     int    `json:"weight_low_lbs"`
-	WeightMaxLbs     int    `json:"weight_max_lbs"`
-	AverageWeight    int    `json:"average_weight"`
-	Lifespan         int    `json:"average_lifespan"`
-	Details          string `json:"details"`
-	AlternateNames   string `json:"alternate_names"`
-	GeographicOrigin string `json:"geographic_origin"`
+	Id               int    `json:"id" xml:"id"`
+	Breed            string `json:"breed" xml:"breed"`
+	WeightLowLbs     int    `json:"weight_low_lbs" xml:"weight_low_lbs"`
+	WeightMaxLbs     int    `json:"weight_max_lbs" xml:"weight_max_lbs"`
+	AverageWeight    int    `json:"average_weight" xml:"average_weight"`
+	Lifespan         int    `json:"average_lifespan" xml:"average_lifespan"`
+	Details          string `json:"details" xml:"details"`
+	AlternateNames   string `json:"alternate_names" xml:"alternate_names"`
+	GeographicOrigin string `json:"geographic_origin" xml:"geographic_origin"`
 }
 type Dog struct {
 	Id               int       `json:"id"`

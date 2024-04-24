@@ -2,6 +2,7 @@ package models
 
 import (
 	"context"
+	"log"
 	"time"
 )
 
@@ -29,7 +30,6 @@ func (m *mysqlRepository) AllDogBreeds() ([]*DogBreed, error) {
 			&d.Breed,
 			&d.WeightLowLbs,
 			&d.WeightHighLbs,
-			&d.AverageWeight,
 			&d.Lifespan,
 			&d.Details,
 			&d.AlternateNames,
@@ -41,4 +41,48 @@ func (m *mysqlRepository) AllDogBreeds() ([]*DogBreed, error) {
 		breeds = append(breeds, &d)
 	}
 	return breeds, nil
+}
+
+func (m *mysqlRepository) GetBreedByName(b string) (*DogBreed, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*3)
+	defer cancel()
+
+	query := `select * from dog_breeds where breed=?`
+	row := m.DB.QueryRowContext(ctx, query, b)
+
+	var dogBreed DogBreed
+	err := row.Scan(
+		&dogBreed.Id,
+		&dogBreed.Breed,
+		&dogBreed.WeightLowLbs,
+		&dogBreed.WeightHighLbs,
+		&dogBreed.Lifespan,
+		&dogBreed.Details,
+		&dogBreed.AlternateNames,
+		&dogBreed.GeographicOrigin,
+	)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	return &dogBreed, nil
+}
+func (m *mysqlRepository) GetDogOfMonthById(id int) (*DogOfMonth, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*30)
+	defer cancel()
+
+	query := `select * from dog_of_month where id=?`
+	row := m.DB.QueryRowContext(ctx, query, id)
+
+	var dog DogOfMonth
+	err := row.Scan(
+		&dog.Id,
+		&dog.Image,
+		&dog.Video,
+	)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	return &dog, nil
 }

@@ -1,38 +1,31 @@
 package main
 
 import (
+	models "github.com/matizaj/go-app/log-service-v2/data"
+	"github.com/matizaj/go-app/log-service-v2/utils"
 	"log"
 	"net/http"
 )
 
-func (app *Config) Hello(w http.ResponseWriter, r *http.Request) {
+func (app *Config) RegisterRoutes(router *http.ServeMux) {
+	router.HandleFunc("GET /", app.hello)
+	router.HandleFunc("POST /log", app.addLogEntry)
+}
+
+func (app *Config) hello(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("ok"))
 }
-func RequestLoggerMiddleware(next http.Handler) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("method %s, path: %s", r.Method, r.URL.Path)
-		next.ServeHTTP(w, r)
+func (app *Config) addLogEntry(w http.ResponseWriter, r *http.Request) {
+	var payload models.LogEntry
+	err := utils.ReadJson(r, &payload)
+	if err != nil {
+		log.Println("failed to parse request")
+		return
 	}
-}
-func RequireAuthMiddleware(next http.Handler) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		// chech if user is authenticated
-		token := r.Header.Get("Authorization")
-		if token != "Bearer token" {
-			http.Error(w, "Unauthorized", http.StatusUnauthorized)
-			return
-		}
-		next.ServeHTTP(w, r)
+	err = app.Models.Log.AddLogEntry(payload)
+	if err != nil {
+		log.Println("failed to add log entry")
+		return
 	}
-}
-
-type Middleware func(next http.Handler) http.HandlerFunc
-
-func MiddlewareChain(middlewares ...Middleware) Middleware {
-	return func(next http.Handler) http.HandlerFunc {
-		for i := len(middlewares) - 1; i >= 0; i-- {
-			next = middlewares[i](next)
-		}
-		return next.ServeHTTP
-	}
+	w.Write([]byte("ok"))
 }

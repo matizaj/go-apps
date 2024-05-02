@@ -1,5 +1,31 @@
-GET http://localhost:8090/api/v2/bye/42
-Accept: application/json
-Authorization: Bearer token
+POST http://logger-service-v2/log
+Content-Type: application/json
+
+{
+  "name": "this is log entry docker",
+  "data": "it contains test message docker"
+}
 
 ###
+POST http://localhost:8090/log
+Content-Type: application/json
+
+{
+  "name": "this is log entry",
+  "data": "it contains test message"
+}
+
+###
+GET http://localhost:8090/log
+Accept: application/json
+
+###
+
+
+apk --no-cache add curl
+
+###
+
+# curl -d '{"name":"from broker", "data":"test data from container"}' -H "Content-Type: application/json" -X POST http://logger-service-v2:8090/log
+
+

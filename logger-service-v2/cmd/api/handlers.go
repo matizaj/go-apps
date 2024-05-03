@@ -19,12 +19,12 @@ func (app *Config) addLogEntry(w http.ResponseWriter, r *http.Request) {
 	var payload models.LogEntry
 	err := utils.ReadJson(r, &payload)
 	if err != nil {
-		log.Println("failed to parse request")
+		log.Println("failed to parse request", err)
 		return
 	}
 	err = app.Models.Log.AddLogEntry(payload)
 	if err != nil {
-		log.Println("failed to add log entry")
+		log.Println("failed to add log entry", err)
 		return
 	}
 	w.Write([]byte("ok"))

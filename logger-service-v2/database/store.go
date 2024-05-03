@@ -5,10 +5,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
-	"time"
 )
 
 const mongoUrl = "mongodb://mongo-v2:27017"
+
+//const mongoUrl = "mongodb://localhost:27017"
 
 func ConnectToMongo() (*mongo.Client, error) {
 	clientOpt := options.Client().ApplyURI(mongoUrl)
@@ -23,20 +24,21 @@ func ConnectToMongo() (*mongo.Client, error) {
 		return nil, err
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
-	defer cancel()
-
-	defer func() {
-		if err = connection.Disconnect(ctx); err != nil {
-			panic(err)
-		}
-	}()
+	//ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
+	//defer cancel()
+	//
+	//defer func() {
+	//	if err = connection.Disconnect(ctx); err != nil {
+	//		panic(err)
+	//	}
+	//}()
 
 	err = connection.Ping(context.TODO(), nil)
 	if err != nil {
 		log.Println("cant ping mongo ->", err)
 		return nil, err
 	}
+	log.Println("Database ping!")
 
 	return connection, nil
 }

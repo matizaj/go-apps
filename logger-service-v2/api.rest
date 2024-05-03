@@ -12,7 +12,7 @@ Content-Type: application/json
 
 {
   "name": "this is log entry",
-  "data": "it contains test message"
+  "data": "it contains test message locval"
 }
 
 ###
@@ -26,6 +26,6 @@ apk --no-cache add curl
 
 ###
 
-# curl -d '{"name":"from broker", "data":"test data from container"}' -H "Content-Type: application/json" -X POST http://logger-service-v2:8090/log
+# curl -d '{"name":"from broker", "data":"test data from container 789"}' -H "Content-Type: application/json" -X POST http://logger-service-v2:8090/log
 
 

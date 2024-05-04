@@ -16,7 +16,7 @@ import (
 const (
 	webPort  = "80"
 	rpcPort  = "5001"
-	mongoUrl = "mongodb://mongo:27017"
+	mongoUrl = "mongodb://mongo-v2:27017"
 	gRpcPort = "50001"
 )
 
@@ -52,6 +52,7 @@ func main() {
 		log.Println("failed to register rpc server")
 	}
 	go app.rpcListen()
+	go app.gRPCListen()
 	app.serve()
 
 }
@@ -72,7 +73,7 @@ func connectToMongo() (*mongo.Client, error) {
 	// create connection options
 	clientOptions := options.Client().ApplyURI(mongoUrl)
 	clientOptions.SetAuth(options.Credential{
-		Username: "admin",
+		Username: "go-admin",
 		Password: "password",
 	})
 

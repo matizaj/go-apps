@@ -102,6 +102,15 @@ services:
       mode: replicated
       replicas: 1
 
+  logger-service-v2:
+    build:
+      context: ../logger-service-v2
+      dockerfile: ../logger-service-v2/logger-service-v2.dockerfile
+    restart: always
+    deploy:
+      mode: replicated
+      replicas: 1
+
   listener-service:
     build:
       context: ../listener-service

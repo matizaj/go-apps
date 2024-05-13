@@ -1,0 +1,99 @@
+version: '3'
+services:
+  caddy:
+    image: matizaj101/micro-caddy:1.0.0
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    deploy:
+      mode: replicated
+      replicas: 1
+  frontend:
+    image: matizaj101/frontend:1.0.0
+    deploy:
+      mode: replicated
+      replicas: 1
+  broker-service:
+    image: matizaj101/broker-service:1.0.1
+    deploy:
+      mode: replicated
+      replicas: 1
+  listener-service:
+    image: matizaj101/listener-service:1.0.0
+    deploy:
+      mode: replicated
+      replicas: 1
+  authentication-service:
+    image: matizaj101/auth-service:1.0.0
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      DSN: "host=postgres port=5432 user=postgres password=password dbname=postgres sslmode=disable timezone=UTC connect_timeout=5"
+  logger-service:
+    image: matizaj101/logger-service:1.0.0
+    deploy:
+      mode: replicated
+      replicas: 1
+  mail-service:
+    image: matizaj101/mail-service:1.0.0
+    ports:
+      - "8085:80"
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      MAIL_DOMAIN: localhost
+      MAIL_HOST: mailhog
+      MAIL_USERNAME: ""
+      MAIL_PASSWORD: ""
+      MAIL_PORT: 1025
+      MAIL_ENCRYPTION: none
+      MAIL_FROM_NAME: "John Snow"
+      MAIL_FROM_ADDRESS: john.snow@example.com
+  rabbitmq:
+    image: 'rabbitmq:3.9-alpine'
+    ports:
+      - "5672:5672"
+    deploy:
+      mode: global
+  mailhog:
+    image: 'mailhog/mailhog:latest'
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+  postgres:
+    image: 'postgres:14.2'
+    ports:
+      - "5432:5432"
+    deploy:
+      mode: replicated
+      replicas: 1
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+    volumes:
+      - ./db-data/postgres/:/var/lib/postgresql/data/
+      - ./db-data/scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+  mongo-v2:
+    image: mongo
+    ports:
+      - "27017:27017"
+    deploy:
+      mode: global
+    environment:
+      MONGO_INITDB_DATABASE: "db-logs"
+      MONGO_INITDB_ROOT_USERNAME: "go-admin"
+      MONGO_INITDB_ROOT_PASSWORD: "password"
+    volumes:
+      - ./db-data/mongo-v2/:/data/db
+
+volumes:
+  caddy_data:
+    external: true
+  caddy_config:
+    external: true

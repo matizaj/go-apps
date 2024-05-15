@@ -46,8 +46,11 @@ func render(w http.ResponseWriter, t string) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	if err := tmpl.Execute(w, nil); err != nil {
+	var data struct {
+		BrokerUrl string
+	}
+	data.BrokerUrl = os.Getenv("BROKER_URL")
+	if err := tmpl.Execute(w, data); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

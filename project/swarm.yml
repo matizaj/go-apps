@@ -12,10 +12,12 @@ services:
       mode: replicated
       replicas: 1
   frontend:
-    image: matizaj101/frontend:1.0.0
+    image: matizaj101/frontend:1.0.1
     deploy:
       mode: replicated
       replicas: 1
+    environment:
+      BROKER_URL: "http://backend"
   broker-service:
     image: matizaj101/broker-service:1.0.1
     deploy:

@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: go-mongo
+  template:
+    metadata:
+      labels:
+        app: go-mongo
+    spec:
+      containers:
+        - name: mongo
+          image: "mongo"
+          env:
+            - name: MONGO_INITDB_DATABASE
+              value: "db-logs"
+            - name: MONGO_INITDB_ROOT_USERNAME
+              value: "go-admin"
+            - name: MONGO_INITDB_ROOT_PASSWORD
+              value: "password"
+          ports:
+            - containerPort: 27017
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: go-mongo-svc
+spec:
+  selector:
+    name: go-mongo-svc
+  ports:
+    - protocol: TCP
+      name: main-port
+      port: 27017
+      targetPort: 27017

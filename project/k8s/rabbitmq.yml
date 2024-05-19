@@ -14,6 +14,13 @@ spec:
       containers:
         - name: rabbitmq
           image: "rabbitmq:3.9-alpine"
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
           ports:
             - containerPort: 5672
 
@@ -24,7 +31,7 @@ metadata:
   name: rabbitmq
 spec:
   selector:
-    name: rabbitmq
+    app: rabbitmq
   ports:
     - protocol: TCP
       name: main-port

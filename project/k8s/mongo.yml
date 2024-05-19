@@ -31,7 +31,7 @@ metadata:
   name: go-mongo-svc
 spec:
   selector:
-    name: go-mongo-svc
+    app: go-mongo-svc
   ports:
     - protocol: TCP
       name: main-port

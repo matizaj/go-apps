@@ -16,6 +16,7 @@
 */db-data/rabbitmq/*
 */db-data/mongo-v2/*
 */db-data/mariadb/*
+breeders/project/db-data/mariadb/*
 .*.swp
 core
 *.cgo*.go

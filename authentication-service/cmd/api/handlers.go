@@ -33,8 +33,8 @@ func (app *Config) Auth(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := app.Models.User.GetByEmail(requestPayload.Email)
-	users, err := app.Models.User.GetAll()
+	user, err := app.Repo.GetByEmail(requestPayload.Email)
+	users, err := app.Repo.GetAll()
 	log.Printf("user %s: ", user)
 	if err != nil {
 		log.Printf("cant find user %s: ", err)
@@ -43,7 +43,7 @@ func (app *Config) Auth(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Printf("user %s: ", user)
 	log.Printf("users %s: ", users)
-	valid, err := user.PasswordMatches(requestPayload.Password)
+	valid, err := app.Repo.PasswordMatches(requestPayload.Password, *user)
 	if err != nil || !valid {
 		errors.New("invalid credentials")
 		return

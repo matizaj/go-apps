@@ -12,9 +12,19 @@ const dbTimeout = time.Second * 3
 
 var db *sql.DB
 
-type Models struct {
-	User User
+type PostgresRepo struct {
+	Con *sql.DB
 }
+
+func NewPostrgesRepo(db *sql.DB) *PostgresRepo {
+	return &PostgresRepo{
+		Con: db,
+	}
+}
+
+//	type Models struct {
+//		User User
+//	}
 type User struct {
 	ID        int       `json:"id"`
 	Email     string    `json:"email"`
@@ -26,14 +36,14 @@ type User struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-func New(dbPool *sql.DB) Models {
-	db = dbPool
-	return Models{
-		User: User{},
-	}
-}
+//func New(dbPool *sql.DB) Models {
+//	db = dbPool
+//	return Models{
+//		User: User{},
+//	}
+//}
 
-func (u *User) GetAll() ([]*User, error) {
+func (u *PostgresRepo) GetAll() ([]*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
@@ -70,7 +80,7 @@ func (u *User) GetAll() ([]*User, error) {
 	return users, nil
 }
 
-func (u *User) GetByEmail(email string) (*User, error) {
+func (u *PostgresRepo) GetByEmail(email string) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 	query := `select id, email, first_name, last_name, password, user_active, created_at, updated_at from users where email = $1`
@@ -92,7 +102,7 @@ func (u *User) GetByEmail(email string) (*User, error) {
 	return &user, nil
 }
 
-func (u *User) GetById(id int) (*User, error) {
+func (u *PostgresRepo) GetById(id int) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 	query := `select id, email, first_name, last_name, password, user_active, created_at, updated_at 
@@ -115,7 +125,7 @@ func (u *User) GetById(id int) (*User, error) {
 	return &user, nil
 }
 
-func (u *User) Update() error {
+func (u *PostgresRepo) Update(user User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
@@ -127,26 +137,26 @@ func (u *User) Update() error {
 			updated_at=$5
 			where id=$6
 			`
-	_, err := db.ExecContext(ctx, stmt, u.Email, u.FirstName, u.LastName, u.Active, time.Now(), u.ID)
+	_, err := db.ExecContext(ctx, stmt, user.Email, user.FirstName, user.LastName, user.Active, time.Now(), user.ID)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (u *User) Delete() error {
-	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
-	defer cancel()
+//func (u *PostgresRepo) Delete() error {
+//	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
+//	defer cancel()
+//
+//	stmt := "delete from users where id=$1"
+//	_, err := db.ExecContext(ctx, stmt, u.ID)
+//	if err != nil {
+//		return err
+//	}
+//	return nil
+//}
 
-	stmt := "delete from users where id=$1"
-	_, err := db.ExecContext(ctx, stmt, u.ID)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (u *User) DeleteById(id int) error {
+func (u *PostgresRepo) DeleteById(id int) error {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
@@ -158,11 +168,11 @@ func (u *User) DeleteById(id int) error {
 	return nil
 }
 
-func (u *User) Insert(user User) (int, error) {
+func (u *PostgresRepo) Insert(user User) (int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(u.Password), 12)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), 12)
 	if err != nil {
 		return 0, err
 	}
@@ -184,7 +194,7 @@ func (u *User) Insert(user User) (int, error) {
 	return newID, nil
 }
 
-func (u *User) ResetPassword(password string) error {
+func (u *PostgresRepo) ResetPassword(password string, user User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
@@ -194,15 +204,15 @@ func (u *User) ResetPassword(password string) error {
 	}
 
 	stmt := `update users set password =$1 where id=$2`
-	_, err = db.ExecContext(ctx, stmt, hashedPassword, u.ID)
+	_, err = db.ExecContext(ctx, stmt, hashedPassword, user.ID)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (u *User) PasswordMatches(plainText string) (bool, error) {
-	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(plainText))
+func (u *PostgresRepo) PasswordMatches(plainText string, user User) (bool, error) {
+	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(plainText))
 	if err != nil {
 		switch {
 		case errors.Is(err, bcrypt.ErrMismatchedHashAndPassword):

@@ -16,7 +16,7 @@ spec:
           image:  "matizaj101/frontend:1.0.1"
           env:
             - name: BROKER_URL
-              value: "http://broker-server.info"
+              value: "http://broker-service.info"
           resources:
             requests:
               memory: "64Mi"

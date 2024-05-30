@@ -34,27 +34,21 @@ func (app *Config) Auth(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user, err := app.Repo.GetByEmail(requestPayload.Email)
-	users, err := app.Repo.GetAll()
-	log.Printf("user %s: ", user)
 	if err != nil {
 		log.Printf("cant find user %s: ", err)
 		errors.New("invalid credentials")
 		return
 	}
-	log.Printf("user %s: ", user)
-	log.Printf("users %s: ", users)
 	valid, err := app.Repo.PasswordMatches(requestPayload.Password, *user)
 	if err != nil || !valid {
 		errors.New("invalid credentials")
 		return
 	}
-	log.Printf("valid credsd %s: ", valid)
 
 	// log authentication
 	log.Printf("start log auth request...")
 	err = app.logRequest("auth-log", "user email addr")
 	if err != nil {
-		log.Printf("cant log auth request... ", err)
 		errors.New("cant log auth request")
 		return
 	}
@@ -64,7 +58,6 @@ func (app *Config) Auth(w http.ResponseWriter, r *http.Request) {
 		Message: fmt.Sprintf("Logged in user %s", user.Email),
 		Data:    user,
 	}
-	log.Printf("payload to send %s: ", payload)
 	app.writeJson(w, http.StatusOK, payload)
 }
 
@@ -94,10 +87,9 @@ func (app *Config) authenticate(w http.ResponseWriter, a AuthPayload) {
 		app.errorJson(w, err)
 		return
 	}
-	client := &http.Client{}
+
 	log.Println("send  auth request")
-	response, err := client.Do(req)
-	log.Printf("response: %s", response)
+	response, err := app.Client.Do(req)
 	if err != nil {
 		app.errorJson(w, err)
 		return

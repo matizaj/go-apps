@@ -16,9 +16,10 @@ type PostgresRepo struct {
 	Con *sql.DB
 }
 
-func NewPostrgesRepo(db *sql.DB) *PostgresRepo {
+func NewPostrgesRepo(pool *sql.DB) *PostgresRepo {
+	db = pool
 	return &PostgresRepo{
-		Con: db,
+		Con: pool,
 	}
 }
 
@@ -130,7 +131,7 @@ func (u *PostgresRepo) Update(user User) error {
 	defer cancel()
 
 	stmt := `update users set
-			emai; = $1,
+			email = $1,
 			first_name=$2,
 			last_name=$3,
 			user_active=$4,

@@ -20,5 +20,6 @@ func (app *Config) routes() http.Handler {
 	mux.Use(middleware.Heartbeat("/ping"))
 	mux.Post("/auth", app.Auth)
 	mux.Post("/handle", app.HandleSubmission)
+	mux.Post("/register", app.HandleRegister)
 	return mux
 }

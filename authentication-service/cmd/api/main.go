@@ -9,11 +9,10 @@ import (
 	"github.com/matizaj/go-app/authentication-service/data"
 	"log"
 	"net/http"
-	"os"
 	"time"
 )
 
-const webPort = "80"
+const webPort = "8088"
 
 var counts int64
 
@@ -26,10 +25,10 @@ func main() {
 	log.Println("Starting authentication service")
 
 	//connect to DB
-	//conn, err := connectDb()
-	//if err != nil {
-	//	log.Panic("cant connect db :(")
-	//}
+	_, err := connectDb()
+	if err != nil {
+		log.Panic("cant connect db :(")
+	}
 
 	//set app config
 	app := Config{
@@ -41,7 +40,7 @@ func main() {
 		Handler: app.routes(),
 	}
 
-	err := srv.ListenAndServe()
+	err = srv.ListenAndServe()
 	if err != nil {
 		log.Panic(err)
 	}
@@ -54,6 +53,7 @@ func openDb(connectionString string) (*sql.DB, error) {
 	}
 
 	err = db.Ping()
+	log.Println("after ping db")
 	if err != nil {
 		return nil, err
 	}
@@ -61,7 +61,8 @@ func openDb(connectionString string) (*sql.DB, error) {
 }
 
 func connectDb() (*sql.DB, error) {
-	connectionString := os.Getenv("DSN")
+	//connectionString := os.Getenv("DSN")
+	connectionString := "postgres://postgres:password@localhost:5432/postgres?sslmode=disable"
 	for {
 		connection, err := openDb(connectionString)
 		if err != nil {

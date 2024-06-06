@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 )
@@ -160,4 +161,19 @@ func (app *Config) logRequest(name, data string) error {
 	defer resp.Body.Close()
 	log.Printf("request logged")
 	return nil
+}
+func (app *Config) HandleRegister(w http.ResponseWriter, req *http.Request) {
+	type user struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+	var u user
+
+	defer req.Body.Close()
+
+	body, _ := io.ReadAll(req.Body)
+	_ = json.Unmarshal(body, &u)
+
+	buser, _ := json.Marshal(u)
+	w.Write(buser)
 }

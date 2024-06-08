@@ -9,3 +9,7 @@ Microservices:<br/>
     - Mail,<br/>
     - Listener: take event from rabbitmg queue<br/>
 ![plot](go-microservices-req-flow.png)
+
+breeders: mini project, mainly for practising design patterns <br/>
+ecom: mini project, e-commerce application to store information about
+user's orders<br/>
